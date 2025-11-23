@@ -1,0 +1,67 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: ratein-db
+    env: docker
+    plan: free
+    databases:
+      - name: ratein
+        user: ratein_user
+
+  # Backend Service
+  - type: web
+    name: ratein-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/v1
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: ratein-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ratein-db
+          property: port
+      - key: DB_USERNAME
+        fromDatabase:
+          name: ratein-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ratein-db
+          property: password
+      - key: DB_DATABASE
+        fromDatabase:
+          name: ratein-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: ratein-frontend
+          property: host
+
+  # Frontend Service
+  - type: web
+    name: ratein-frontend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    buildCommand: docker build --build-arg REACT_APP_API_URL=$REACT_APP_API_URL -t ratein-frontend .
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: ratein-backend
+          property: host
