@@ -44,7 +44,10 @@ services:
       - ratein-network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_API_URL=http://localhost:3000
     container_name: ratein-frontend
     restart: unless-stopped
     ports:
