@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   Star, Search, MapPin, Plus, Edit3, LogOut, Lock,
   RefreshCw, Store, Heart
 } from 'lucide-react';
@@ -10,7 +10,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useConfirmation } from '../components/common/ConfirmationDialog';
 import toast from 'react-hot-toast';
 
-interface Store {
+interface StoreData {
   id: number;
   name: string;
   address: string;
@@ -25,15 +25,15 @@ interface Store {
 }
 
 interface RatingModalProps {
-  store: Store;
+  store: StoreData;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (rating: string, comment: string) => void;
   loading: boolean;
 }
 
-const RatingModal: React.FC<RatingModalProps> = ({ 
-  store, isOpen, onClose, onSubmit, loading 
+const RatingModal: React.FC<RatingModalProps> = ({
+  store, isOpen, onClose, onSubmit, loading
 }) => {
   const [rating, setRating] = useState(store.user_rating?.rating_value || '5');
   const [comment, setComment] = useState(store.user_rating?.comment || '');
@@ -56,7 +56,7 @@ const RatingModal: React.FC<RatingModalProps> = ({
           {store.user_rating ? 'Update Rating' : 'Rate Store'}
         </h3>
         <p className="text-gray-600 mb-4">{store.name}</p>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -71,11 +71,10 @@ const RatingModal: React.FC<RatingModalProps> = ({
                   className="p-1"
                 >
                   <Star
-                    className={`h-8 w-8 ${
-                      parseInt(rating) >= star
+                    className={`h-8 w-8 ${parseInt(rating) >= star
                         ? 'text-yellow-400 fill-current'
                         : 'text-gray-300'
-                    }`}
+                      }`}
                   />
                 </button>
               ))}
@@ -120,10 +119,10 @@ const RatingModal: React.FC<RatingModalProps> = ({
 
 export const NormalUserDashboard: React.FC = () => {
   const { user, logout, updatePassword } = useAuth();
-  const [stores, setStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<StoreData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<StoreData | null>(null);
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
   const [ratingLoading, setRatingLoading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -135,13 +134,14 @@ export const NormalUserDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchStores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchStores = async () => {
     try {
       setLoading(true);
       console.log('Fetching stores...');
-      
+
       // First try to get stores
       let storesData = [];
       try {
@@ -154,7 +154,7 @@ export const NormalUserDashboard: React.FC = () => {
         setStores([]);
         return;
       }
-      
+
       // Then try to get user ratings
       let userRatings: any[] = [];
       try {
@@ -164,7 +164,7 @@ export const NormalUserDashboard: React.FC = () => {
         console.warn('Could not load user ratings:', ratingsError);
         // Continue without user ratings
       }
-      
+
       const storesWithRatings = storesData.map((store: any) => {
         const userRating = userRatings.find((r: any) => r.store_id === store.id);
         return {
@@ -177,7 +177,7 @@ export const NormalUserDashboard: React.FC = () => {
           user_rating: userRating
         };
       });
-      
+
       console.log('Processed stores:', storesWithRatings);
       setStores(storesWithRatings);
     } catch (error) {
@@ -189,7 +189,7 @@ export const NormalUserDashboard: React.FC = () => {
     }
   };
 
-  const handleRateStore = (store: Store) => {
+  const handleRateStore = (store: StoreData) => {
     setSelectedStore(store);
     setRatingModalOpen(true);
   };
@@ -199,7 +199,7 @@ export const NormalUserDashboard: React.FC = () => {
 
     try {
       setRatingLoading(true);
-      
+
       if (selectedStore.user_rating) {
         // Update existing rating
         await ratingsApi.updateRating(selectedStore.user_rating.id, {
@@ -216,7 +216,7 @@ export const NormalUserDashboard: React.FC = () => {
         });
         toast.success('Rating submitted successfully!');
       }
-      
+
       setRatingModalOpen(false);
       fetchStores(); // Refresh stores
     } catch (error: any) {
@@ -228,7 +228,7 @@ export const NormalUserDashboard: React.FC = () => {
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!passwordData.currentPassword || !passwordData.newPassword) {
       toast.error('Please fill in all password fields');
       return;
@@ -259,14 +259,14 @@ export const NormalUserDashboard: React.FC = () => {
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-40 h-40 bg-primary-500/5 rounded-full blur-2xl animate-pulse-slow"></div>
         <div className="absolute bottom-20 right-20 w-32 h-32 bg-secondary-400/5 rounded-full blur-xl animate-float"></div>
-        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-luxury-500/5 rounded-full blur-lg animate-pulse-slow" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-luxury-500/5 rounded-full blur-lg animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
-      
+
       {/* Header */}
       <header className="relative z-10 luxury-card border-b border-primary-500/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-4"
@@ -282,8 +282,8 @@ export const NormalUserDashboard: React.FC = () => {
                 <p className="text-gray-300 font-medium">Premium Store Discovery Platform</p>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-6"
@@ -371,7 +371,7 @@ export const NormalUserDashboard: React.FC = () => {
             >
               {/* Background Glow Effect */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-xl font-bold text-gray-100 line-clamp-2 group-hover:text-primary-300 transition-colors">{store.name}</h3>
@@ -397,7 +397,7 @@ export const NormalUserDashboard: React.FC = () => {
                       {store.total_ratings} review{store.total_ratings !== 1 ? 's' : ''}
                     </span>
                   </div>
-                  
+
                   {store.user_rating ? (
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-1 px-2 py-1 bg-gradient-to-r from-amber-500/20 to-amber-400/20 rounded-full">
@@ -465,7 +465,7 @@ export const NormalUserDashboard: React.FC = () => {
             className="bg-white rounded-xl shadow-strong p-6 max-w-md w-full"
           >
             <h3 className="text-xl font-bold text-gray-900 mb-4">Update Password</h3>
-            
+
             <form onSubmit={handlePasswordUpdate}>
               <div className="space-y-4 mb-6">
                 <div>
@@ -524,7 +524,7 @@ export const NormalUserDashboard: React.FC = () => {
           </motion.div>
         </div>
       )}
-      
+
       {/* Confirmation Dialog */}
       <ConfirmationComponent />
     </div>

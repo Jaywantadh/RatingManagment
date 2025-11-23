@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Store, Star, MapPin, User } from 'lucide-react';
+import { Search, Store, Star, MapPin, User } from 'lucide-react';
 import { storesApi } from '../../services/api';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
-interface Store {
+interface StoreData {
   id: number;
   name: string;
   address: string;
@@ -18,7 +18,7 @@ interface Store {
 }
 
 export const StoreManagement: React.FC = () => {
-  const [stores, setStores] = useState<Store[]>([]);
+  const [stores, setStores] = useState<StoreData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +26,7 @@ export const StoreManagement: React.FC = () => {
 
   useEffect(() => {
     fetchStores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const fetchStores = async () => {
@@ -33,7 +34,7 @@ export const StoreManagement: React.FC = () => {
       setLoading(true);
       const response = await storesApi.getStores(currentPage, 10, searchTerm);
       console.log('Admin: Fetched stores:', response.data);
-      
+
       // Transform the API response to match component interface
       const transformedStores = response.data.stores.map((store: any) => ({
         id: store.id,
@@ -46,7 +47,7 @@ export const StoreManagement: React.FC = () => {
         created_at: store.created_at,
         updated_at: store.updated_at
       }));
-      
+
       setStores(transformedStores);
       setTotalPages(Math.ceil(response.data.total / 10));
     } catch (error) {

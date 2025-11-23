@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Search, Filter, Users, Crown, Store, Shield, TrendingUp, UserPlus,
-  Activity, Calendar, Eye, BarChart3, Award, Sparkles, Diamond
+import {
+  Search, Filter, Users, Crown, Store, TrendingUp, UserPlus,
+  Activity, Calendar, BarChart3, Sparkles
 } from 'lucide-react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
+import {
+  XAxis, YAxis, CartesianGrid, Tooltip,
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { usersApi } from '../../services/api';
 import { LoadingSpinner } from '../common/LoadingSpinner';
@@ -45,6 +45,7 @@ export const UserManagement: React.FC = () => {
 
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const fetchUsers = async () => {
@@ -53,7 +54,7 @@ export const UserManagement: React.FC = () => {
       const response = await usersApi.getUsers(currentPage, 10, searchTerm);
       setUsers(response.data.users);
       setTotalPages(Math.ceil(response.data.total / 10));
-      
+
       // Generate analytics data
       generateAnalytics(response.data.users, response.data.total);
     } catch (error) {
@@ -153,7 +154,7 @@ export const UserManagement: React.FC = () => {
     };
 
     const config = configs[role as keyof typeof configs] || configs.NORMAL_USER;
-    
+
     return (
       <span className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-bold ${config.bg} ${config.text} ${config.border} ${config.glow} border backdrop-blur-sm`}>
         {getRoleIcon(role)}
@@ -164,7 +165,7 @@ export const UserManagement: React.FC = () => {
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -224,7 +225,7 @@ export const UserManagement: React.FC = () => {
               {
                 title: 'Active Members',
                 value: analytics.activeUsers.toLocaleString(),
-                subtitle: `${Math.round((analytics.activeUsers/analytics.totalUsers)*100)}% engagement`,
+                subtitle: `${Math.round((analytics.activeUsers / analytics.totalUsers) * 100)}% engagement`,
                 icon: Activity,
                 gradient: 'from-emerald-500 to-emerald-600',
                 iconBg: 'bg-emerald-500/20',
@@ -336,7 +337,7 @@ export const UserManagement: React.FC = () => {
           </div>
           <h3 className="text-xl font-bold text-gray-200">Elite Member Search</h3>
         </div>
-        
+
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Premium Search */}
           <div className="flex-1">
@@ -402,7 +403,7 @@ export const UserManagement: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gradient-to-r from-dark-800/50 to-dark-700/50 border-b border-gray-600/30">
@@ -503,7 +504,7 @@ export const UserManagement: React.FC = () => {
                   Elite Member Directory
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -514,7 +515,7 @@ export const UserManagement: React.FC = () => {
                 >
                   Previous
                 </motion.button>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -542,7 +543,7 @@ export const UserManagement: React.FC = () => {
             <div className="absolute top-0 left-1/4 w-32 h-32 bg-primary-500/5 rounded-full blur-2xl animate-pulse-slow"></div>
             <div className="absolute bottom-0 right-1/4 w-24 h-24 bg-secondary-500/5 rounded-full blur-xl animate-float"></div>
           </div>
-          
+
           <div className="relative z-10">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
@@ -552,7 +553,7 @@ export const UserManagement: React.FC = () => {
             >
               <Users className="h-12 w-12 text-gray-300" />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -563,7 +564,7 @@ export const UserManagement: React.FC = () => {
                 Adjust your search criteria or filters to discover premium members in our elite directory
               </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -571,8 +572,8 @@ export const UserManagement: React.FC = () => {
               className="mt-8 flex items-center justify-center space-x-4"
             >
               <div className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-secondary-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-2 h-2 bg-luxury-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+              <div className="w-2 h-2 bg-secondary-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-luxury-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
             </motion.div>
           </div>
         </motion.div>

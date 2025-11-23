@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Star, Store, User, Calendar, MessageSquare } from 'lucide-react';
+import { Filter, Star, Store, User, Calendar, MessageSquare } from 'lucide-react';
 import { ratingsApi } from '../../services/api';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import toast from 'react-hot-toast';
@@ -30,6 +30,7 @@ export const RatingManagement: React.FC = () => {
 
   useEffect(() => {
     fetchRatings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const fetchRatings = async () => {

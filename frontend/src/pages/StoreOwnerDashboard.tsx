@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, Cell
 } from 'recharts';
-import { 
-  Store, Star, TrendingUp, Plus, Edit3, Trash2, LogOut, 
+import {
+  Store, Star, TrendingUp, Plus, Edit3, Trash2, LogOut,
   BarChart3, Award, Crown, Activity, MessageCircle, Lock, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -49,8 +49,8 @@ interface StoreModalProps {
   loading: boolean;
 }
 
-const StoreModal: React.FC<StoreModalProps> = ({ 
-  store, isOpen, onClose, onSubmit, loading 
+const StoreModal: React.FC<StoreModalProps> = ({
+  store, isOpen, onClose, onSubmit, loading
 }) => {
   const [name, setName] = useState(store?.name || '');
   const [address, setAddress] = useState(store?.address || '');
@@ -99,7 +99,7 @@ const StoreModal: React.FC<StoreModalProps> = ({
             <p className="text-gray-400 text-sm">Configure your premium location</p>
           </div>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-gray-300 mb-2">
@@ -117,7 +117,7 @@ const StoreModal: React.FC<StoreModalProps> = ({
               maxLength={60}
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-semibold text-gray-300 mb-2">
               Location Address <span className="text-primary-400">*</span>
@@ -193,7 +193,7 @@ export const StoreOwnerDashboard: React.FC = () => {
       setLoading(true);
       const response = await storesApi.getMyStores();
       console.log('Store Owner: Fetched my stores:', response.data);
-      
+
       // The API response should already include ratings data
       // Transform the response to match our interface
       const transformedStores = (response.data.stores || response.data || []).map((store: any) => ({
@@ -206,7 +206,7 @@ export const StoreOwnerDashboard: React.FC = () => {
         created_at: store.created_at,
         updated_at: store.updated_at
       }));
-      
+
       setStores(transformedStores);
     } catch (error) {
       console.error('Error fetching stores:', error);
@@ -231,7 +231,7 @@ export const StoreOwnerDashboard: React.FC = () => {
   const handleStoreSubmit = async (name: string, address: string) => {
     try {
       setStoreLoading(true);
-      
+
       if (selectedStore) {
         // Update existing store
         await storesApi.updateStore(selectedStore.id, { name, address });
@@ -241,7 +241,7 @@ export const StoreOwnerDashboard: React.FC = () => {
         await storesApi.createStore({ name, address });
         toast.success('Store created successfully!');
       }
-      
+
       setStoreModalOpen(false);
       fetchMyStores();
     } catch (error: any) {
@@ -273,7 +273,7 @@ export const StoreOwnerDashboard: React.FC = () => {
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!passwordData.currentPassword || !passwordData.newPassword) {
       toast.error('Please fill in all password fields');
       return;
@@ -292,12 +292,12 @@ export const StoreOwnerDashboard: React.FC = () => {
   const getTotalStats = () => {
     const totalStores = stores.length;
     const totalRatings = stores.reduce((sum, store) => sum + (store.total_ratings || 0), 0);
-    const averageRating = totalRatings > 0 
+    const averageRating = totalRatings > 0
       ? stores.reduce((sum, store) => sum + ((store.average_rating || 0) * (store.total_ratings || 0)), 0) / totalRatings
       : 0;
     const activeStores = stores.filter(store => (store.total_ratings || 0) > 0).length;
     const highRatedStores = stores.filter(store => (store.average_rating || 0) >= 4.0).length;
-    
+
     return { totalStores, totalRatings, averageRating, activeStores, highRatedStores };
   };
 
@@ -342,15 +342,17 @@ export const StoreOwnerDashboard: React.FC = () => {
   };
 
   const { totalStores, totalRatings, averageRating, activeStores, highRatedStores } = getTotalStats();
-  
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
+
+  // Unused function - keeping for potential future use
+  // const formatCurrency = (value: number) => {
+  //   return new Intl.NumberFormat('en-US', {
+  //     style: 'currency',
+  //     currency: 'USD',
+  //     minimumFractionDigits: 0,
+  //     maximumFractionDigits: 0,
+  //   }).format(value);
+  // };
+
 
   if (loading) {
     return <LoadingSpinner />;
@@ -362,14 +364,14 @@ export const StoreOwnerDashboard: React.FC = () => {
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-40 h-40 bg-primary-500/5 rounded-full blur-2xl animate-pulse-slow"></div>
         <div className="absolute bottom-20 right-20 w-32 h-32 bg-luxury-400/5 rounded-full blur-xl animate-float"></div>
-        <div className="absolute top-1/3 right-1/3 w-24 h-24 bg-secondary-500/5 rounded-full blur-lg animate-pulse-slow" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/3 right-1/3 w-24 h-24 bg-secondary-500/5 rounded-full blur-lg animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
-      
+
       {/* Header */}
       <header className="relative z-10 luxury-card border-b border-primary-500/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-4"
@@ -385,8 +387,8 @@ export const StoreOwnerDashboard: React.FC = () => {
                 <p className="text-gray-300 font-medium">Premium Store Management Suite</p>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-6"
@@ -435,55 +437,55 @@ export const StoreOwnerDashboard: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
         >
-        {[
-          { 
-            title: 'Elite Locations', 
-            value: totalStores, 
-            icon: Store, 
-            gradient: 'from-blue-500 to-blue-600',
-            bgGradient: 'from-blue-500/20 to-blue-600/10',
-            suffix: '',
-            description: `${activeStores} active stores`,
-            glowColor: 'shadow-blue-500/20'
-          },
-          { 
-            title: 'Premium Reviews', 
-            value: totalRatings, 
-            icon: MessageCircle, 
-            gradient: 'from-emerald-500 to-emerald-600',
-            bgGradient: 'from-emerald-500/20 to-emerald-600/10',
-            suffix: '',
-            description: 'Customer feedback',
-            glowColor: 'shadow-emerald-500/20'
-          },
-          { 
-            title: 'Excellence Score', 
-            value: averageRating.toFixed(1), 
-            icon: Award, 
-            gradient: 'from-amber-500 to-amber-600',
-            bgGradient: 'from-amber-500/20 to-amber-600/10',
-            suffix: '/5',
-            description: 'Overall rating',
-            glowColor: 'shadow-amber-500/20'
-          },
-          { 
-            title: 'High Performers', 
-            value: highRatedStores, 
-            icon: Crown, 
-            gradient: 'from-purple-500 to-purple-600',
-            bgGradient: 'from-purple-500/20 to-purple-600/10',
-            suffix: '',
-            description: '4+ star locations',
-            glowColor: 'shadow-purple-500/20'
-          }
-        ].map((stat, index) => (
+          {[
+            {
+              title: 'Elite Locations',
+              value: totalStores,
+              icon: Store,
+              gradient: 'from-blue-500 to-blue-600',
+              bgGradient: 'from-blue-500/20 to-blue-600/10',
+              suffix: '',
+              description: `${activeStores} active stores`,
+              glowColor: 'shadow-blue-500/20'
+            },
+            {
+              title: 'Premium Reviews',
+              value: totalRatings,
+              icon: MessageCircle,
+              gradient: 'from-emerald-500 to-emerald-600',
+              bgGradient: 'from-emerald-500/20 to-emerald-600/10',
+              suffix: '',
+              description: 'Customer feedback',
+              glowColor: 'shadow-emerald-500/20'
+            },
+            {
+              title: 'Excellence Score',
+              value: averageRating.toFixed(1),
+              icon: Award,
+              gradient: 'from-amber-500 to-amber-600',
+              bgGradient: 'from-amber-500/20 to-amber-600/10',
+              suffix: '/5',
+              description: 'Overall rating',
+              glowColor: 'shadow-amber-500/20'
+            },
+            {
+              title: 'High Performers',
+              value: highRatedStores,
+              icon: Crown,
+              gradient: 'from-purple-500 to-purple-600',
+              bgGradient: 'from-purple-500/20 to-purple-600/10',
+              suffix: '',
+              description: '4+ star locations',
+              glowColor: 'shadow-purple-500/20'
+            }
+          ].map((stat, index) => (
             <motion.div
               key={stat.title}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 0.3 + index * 0.1, type: "spring", stiffness: 100 }}
-            whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
-            className={`luxury-card p-6 hover:shadow-2xl ${stat.glowColor} transition-all duration-500 group cursor-pointer relative overflow-hidden`}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
+              className={`luxury-card p-6 hover:shadow-2xl ${stat.glowColor} transition-all duration-500 group cursor-pointer relative overflow-hidden`}
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex-1">
@@ -560,7 +562,7 @@ export const StoreOwnerDashboard: React.FC = () => {
                   </div>
                   <p className="text-gray-400 text-lg flex items-center"><span className="w-2 h-2 bg-primary-400 rounded-full mr-2"></span>{store.address}</p>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -590,7 +592,7 @@ export const StoreOwnerDashboard: React.FC = () => {
                     <BarChart3 className="h-6 w-6 text-primary-400 mr-3" />
                     Performance Analytics
                   </h4>
-                  
+
                   {/* Analytics Grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                     {/* Rating Trend Chart */}
@@ -604,19 +606,19 @@ export const StoreOwnerDashboard: React.FC = () => {
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                           <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} domain={[0, 5]} />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: '#1f2937', 
-                              border: '1px solid #374151', 
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#1f2937',
+                              border: '1px solid #374151',
                               borderRadius: '12px',
                               color: '#fff'
-                            }} 
+                            }}
                           />
                           <Area type="monotone" dataKey="rating" stroke="#10B981" fill="#10B981" fillOpacity={0.3} strokeWidth={3} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
-                    
+
                     {/* Rating Distribution */}
                     <div className="bg-dark-800/40 p-6 rounded-2xl border border-gray-600/30">
                       <h5 className="text-lg font-semibold text-white mb-4 flex items-center">
@@ -628,13 +630,13 @@ export const StoreOwnerDashboard: React.FC = () => {
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                           <XAxis dataKey="rating" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: '#1f2937', 
-                              border: '1px solid #374151', 
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: '#1f2937',
+                              border: '1px solid #374151',
                               borderRadius: '12px',
                               color: '#fff'
-                            }} 
+                            }}
                           />
                           <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                             {getStoreAnalytics(store).ratingDistribution.map((entry, index) => (
@@ -645,7 +647,7 @@ export const StoreOwnerDashboard: React.FC = () => {
                       </ResponsiveContainer>
                     </div>
                   </div>
-                  
+
                   {/* Performance Metrics */}
                   <div className="bg-dark-800/40 p-6 rounded-2xl border border-gray-600/30 mb-8">
                     <h5 className="text-lg font-semibold text-white mb-6 flex items-center">
@@ -658,13 +660,13 @@ export const StoreOwnerDashboard: React.FC = () => {
                         <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
                         <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
                         <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: '#1f2937', 
-                            border: '1px solid #374151', 
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1f2937',
+                            border: '1px solid #374151',
                             borderRadius: '12px',
                             color: '#fff'
-                          }} 
+                          }}
                         />
                         <Legend />
                         <Line yAxisId="left" type="monotone" dataKey="avgRating" stroke="#F59E0B" strokeWidth={3} name="Avg Rating" />
@@ -674,7 +676,7 @@ export const StoreOwnerDashboard: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Premium Ratings Section */}
               {store.ratings && store.ratings.length > 0 ? (
                 <div className="mt-8">
@@ -703,11 +705,10 @@ export const StoreOwnerDashboard: React.FC = () => {
                                   {[...Array(5)].map((_, i) => (
                                     <Star
                                       key={i}
-                                      className={`h-4 w-4 ${
-                                        i < parseInt(rating.rating_value)
+                                      className={`h-4 w-4 ${i < parseInt(rating.rating_value)
                                           ? 'text-luxury-400 fill-current'
                                           : 'text-gray-600'
-                                      }`}
+                                        }`}
                                     />
                                   ))}
                                 </div>
@@ -762,7 +763,7 @@ export const StoreOwnerDashboard: React.FC = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-200 mb-4">Launch Your First Premium Store</h3>
             <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
-              Transform your business with our premium store management platform. 
+              Transform your business with our premium store management platform.
               Start building your empire today.
             </p>
             <motion.button
@@ -799,7 +800,7 @@ export const StoreOwnerDashboard: React.FC = () => {
             className="bg-white rounded-xl shadow-strong p-6 max-w-md w-full"
           >
             <h3 className="text-xl font-bold text-gray-900 mb-4">Update Password</h3>
-            
+
             <form onSubmit={handlePasswordUpdate}>
               <div className="space-y-4 mb-6">
                 <div>
@@ -858,7 +859,7 @@ export const StoreOwnerDashboard: React.FC = () => {
           </motion.div>
         </div>
       )}
-      
+
       {/* Confirmation Dialog */}
       <ConfirmationComponent />
     </div>
