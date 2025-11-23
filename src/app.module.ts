@@ -16,25 +16,43 @@ import { RatingsModule } from './modules/ratings/ratings.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    
+
     // Database
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST', 'localhost'),
-        port: configService.get('DB_PORT', 5432),
-        username: configService.get('DB_USERNAME', 'postgres'),
-        password: configService.get('DB_PASSWORD', 'password'),
-        database: configService.get('DB_NAME', 'ratein'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development',
-        ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        // Support DATABASE_URL (for Render/Heroku) or individual variables
+        const databaseUrl = configService.get('DATABASE_URL');
+
+        if (databaseUrl) {
+          // Use DATABASE_URL if provided (Render/Heroku style)
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: configService.get('NODE_ENV') === 'development',
+            logging: configService.get('NODE_ENV') === 'development',
+            ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+          };
+        }
+
+        // Fallback to individual variables (local development)
+        return {
+          type: 'postgres',
+          host: configService.get('DB_HOST', 'localhost'),
+          port: configService.get('DB_PORT', 5432),
+          username: configService.get('DB_USERNAME', 'postgres'),
+          password: configService.get('DB_PASSWORD', 'password'),
+          database: configService.get('DB_NAME', 'ratein'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: configService.get('NODE_ENV') === 'development',
+          logging: configService.get('NODE_ENV') === 'development',
+          ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+        };
+      },
       inject: [ConfigService],
     }),
-    
+
     // JWT Configuration
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -46,10 +64,10 @@ import { RatingsModule } from './modules/ratings/ratings.module';
       }),
       inject: [ConfigService],
     }),
-    
+
     // Passport
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    
+
     // Feature Modules
     AuthModule,
     UsersModule,
@@ -59,4 +77,4 @@ import { RatingsModule } from './modules/ratings/ratings.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
